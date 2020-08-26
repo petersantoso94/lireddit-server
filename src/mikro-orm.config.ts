@@ -2,9 +2,10 @@ import { Post } from "./Entities/Post";
 import { __prod__ } from "./constants";
 import { MikroORM } from "@mikro-orm/core";
 import path from "path";
+import { User } from "./Entities/User";
 
 export default {
-  entities: [Post],
+  entities: [Post, User],
   dbName: "lireddit",
   user: "postgres",
   password: "postgres",
