@@ -37,14 +37,30 @@ class UserResponse {
 
 @Resolver()
 export class UserResolver {
-  @Mutation(() => User)
-  async register(@Arg("options") options: UserInput, @Ctx() { em }: IContext) {
+  @Mutation(() => UserResponse)
+  async register(
+    @Arg("options") options: UserInput,
+    @Ctx() { em }: IContext
+  ): Promise<UserResponse> {
     em.clear();
     const { username, password } = options;
     const hashedPassword = await argon2.hash(password);
     const newUser = em.create(User, { username, password: hashedPassword });
-    await em.persistAndFlush(newUser);
-    return newUser;
+    try {
+      await em.persistAndFlush(newUser);
+    } catch (error) {
+      if (error.code === "23505" || error.detail.includes("already exists")) {
+        // duplicate username
+        return {
+          errors: [
+            {
+              message: ErrorMessage.DuplicateUsername,
+            },
+          ],
+        };
+      }
+    }
+    return { user: newUser };
   }
 
   @Mutation(() => UserResponse)
