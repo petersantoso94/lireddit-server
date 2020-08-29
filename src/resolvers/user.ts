@@ -66,7 +66,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: UserInput,
-    @Ctx() { em }: IContext
+    @Ctx() { em, req, res }: IContext
   ): Promise<UserResponse> {
     em.clear();
     const { username, password } = options;
@@ -78,12 +78,17 @@ export class UserResolver {
         errors: [{ message: ErrorMessage.LoginError }],
       };
     const valid = await argon2.verify(user.password, password);
-    return valid
-      ? {
-          user,
-        }
-      : {
-          errors: [{ message: ErrorMessage.LoginError }],
-        };
+
+    if (!valid) {
+      return {
+        errors: [{ message: ErrorMessage.LoginError }],
+      };
+    }
+
+    req.session!.userId = user.id;
+
+    return {
+      user,
+    };
   }
 }
