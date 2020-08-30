@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/core";
-import { __prod__, PORT, REDIS_SECRET } from "./constants";
+import { __prod__, PORT, REDIS_SECRET, ALLOW_ORIGINS } from "./constants";
 import mikroConf from "./mikro-orm.config";
 import express from "express";
 import { ApolloServer } from "apollo-server-express";
@@ -12,6 +12,7 @@ import redis from "redis";
 import session from "express-session";
 import connectRedis from "connect-redis";
 import { IContext } from "./types";
+import cors from "cors";
 
 const main = async () => {
   // init db connection
@@ -22,7 +23,12 @@ const main = async () => {
 
   const RedisStore = connectRedis(session);
   const redisClient = redis.createClient();
-
+  app.use(
+    cors({
+      origin: ALLOW_ORIGINS,
+      credentials: true,
+    })
+  );
   app.use(
     session({
       name: "qid",
@@ -50,7 +56,10 @@ const main = async () => {
     }),
   });
 
-  apolloServer.applyMiddleware({ app });
+  apolloServer.applyMiddleware({
+    app,
+    cors: false,
+  });
 
   app.get("/", (_, res) => {
     res.send("ok");
