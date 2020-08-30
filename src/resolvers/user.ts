@@ -54,6 +54,11 @@ export class UserResolver {
   ): Promise<UserResponse> {
     em.clear();
     const { username, password } = options;
+    if (username.length <= 2 || password.length <= 2) {
+      return {
+        errors: [{ message: ErrorMessage.InvalidUsernameOrPassword }],
+      };
+    }
     const hashedPassword = await argon2.hash(password);
     const newUser = em.create(User, { username, password: hashedPassword });
     try {
@@ -78,7 +83,7 @@ export class UserResolver {
   @Mutation(() => UserResponse)
   async login(
     @Arg("options") options: UserInput,
-    @Ctx() { em, req, res }: IContext
+    @Ctx() { em, req }: IContext
   ): Promise<UserResponse> {
     em.clear();
     const { username, password } = options;
