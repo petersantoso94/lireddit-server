@@ -1,6 +1,6 @@
 export enum ErrorMessage {
   LoginError = "Invalid username or password",
   InvalidUsername = "Invalid username",
-  InvalidUsernameOrPassword = "Invalid username or password",
+  InvalidPassword = "Invalid password",
   DuplicateUsername = "Duplicate username",
 }

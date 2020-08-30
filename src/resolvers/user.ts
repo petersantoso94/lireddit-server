@@ -25,6 +25,8 @@ class UserInput {
 class CustomError {
   @Field()
   message: string;
+  @Field()
+  field: string;
 }
 
 @ObjectType()
@@ -54,9 +56,14 @@ export class UserResolver {
   ): Promise<UserResponse> {
     em.clear();
     const { username, password } = options;
-    if (username.length <= 2 || password.length <= 2) {
+    if (username.length <= 2) {
       return {
-        errors: [{ message: ErrorMessage.InvalidUsernameOrPassword }],
+        errors: [{ message: ErrorMessage.InvalidUsername, field: "username" }],
+      };
+    }
+    if (password.length <= 2) {
+      return {
+        errors: [{ message: ErrorMessage.InvalidPassword, field: "password" }],
       };
     }
     const hashedPassword = await argon2.hash(password);
@@ -70,6 +77,7 @@ export class UserResolver {
           errors: [
             {
               message: ErrorMessage.DuplicateUsername,
+              field: "username",
             },
           ],
         };
@@ -88,17 +96,19 @@ export class UserResolver {
     em.clear();
     const { username, password } = options;
     if (username.length <= 2)
-      return { errors: [{ message: ErrorMessage.InvalidUsername }] };
+      return {
+        errors: [{ message: ErrorMessage.InvalidUsername, field: "username" }],
+      };
     const user = await em.findOne(User, { username });
     if (!user)
       return {
-        errors: [{ message: ErrorMessage.LoginError }],
+        errors: [{ message: ErrorMessage.LoginError, field: "username" }],
       };
     const valid = await argon2.verify(user.password, password);
 
     if (!valid) {
       return {
-        errors: [{ message: ErrorMessage.LoginError }],
+        errors: [{ message: ErrorMessage.LoginError, field: "username" }],
       };
     }
 
