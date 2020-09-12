@@ -19,8 +19,10 @@ import session from "express-session";
 import connectRedis from "connect-redis";
 import { IContext } from "./types";
 import cors from "cors";
+import { sendMail } from "./utils/sendMail";
 
 const main = async () => {
+  sendMail({ html: "<b>test</b>", to: ["test@test.com"] });
   // init db connection
   const orm = MikroORM.init(mikroConf);
   await (await orm).getMigrator().up();
