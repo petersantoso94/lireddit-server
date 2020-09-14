@@ -9,7 +9,7 @@ export class User {
   id!: number;
 
   @Field(() => String)
-  @Property({ type: "date", default: "NOW()" })
+  @Property({ type: "date", onCreate: () => new Date() })
   createdAt = new Date();
 
   @Field(() => String)
@@ -19,6 +19,10 @@ export class User {
   @Field()
   @Property({ type: "text", unique: true })
   username!: string;
+
+  @Field()
+  @Property({ type: "text", unique: true })
+  email!: string;
 
   @Property({ type: "text" })
   password!: string;

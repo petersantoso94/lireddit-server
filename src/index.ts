@@ -1,28 +1,27 @@
-import "reflect-metadata";
 import { MikroORM } from "@mikro-orm/core";
+import { ApolloServer } from "apollo-server-express";
+import connectRedis from "connect-redis";
+import cors from "cors";
+import express from "express";
+import session from "express-session";
+import redis from "redis";
+import "reflect-metadata";
+import { buildSchema } from "type-graphql";
 import {
-  __prod__,
-  PORT,
-  REDIS_SECRET,
   ALLOW_ORIGINS,
   LOGIN_COOKIE_NAME,
+  PORT,
+  REDIS_SECRET,
+  __prod__,
 } from "./constants";
 import mikroConf from "./mikro-orm.config";
-import express from "express";
-import { ApolloServer } from "apollo-server-express";
-import { buildSchema } from "type-graphql";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
-import { UserResolver } from "./resolvers/user";
-import redis from "redis";
-import session from "express-session";
-import connectRedis from "connect-redis";
+import { UserResolver } from "./resolvers/User/user";
 import { IContext } from "./types";
-import cors from "cors";
-import { sendMail } from "./utils/sendMail";
 
 const main = async () => {
-  sendMail({ html: "<b>test</b>", to: ["test@test.com"] });
+  //sendMail({ html: "<b>test</b>", to: ["test@test.com"] });
   // init db connection
   const orm = MikroORM.init(mikroConf);
   await (await orm).getMigrator().up();
