@@ -5,6 +5,15 @@ type IMailOptions = {
   html: string;
 };
 
+export function getForgotPasswordEmailBody(
+  callback_url: string,
+  token: string
+): string {
+  return `
+      <a href="${callback_url}/${token}">Reset Password</a>
+      `;
+}
+
 // async..await is not allowed in global scope, must use a wrapper
 export async function sendMail({ html, to }: IMailOptions) {
   // create reusable transporter object using the default SMTP transport

@@ -3,6 +3,7 @@ import { ErrorMessage } from "../enum";
 import { UserInputRegister } from "../resolvers/User/UserInputRegister";
 import { IsEmailValid } from "./IsEmailValid";
 import { IsUsernameValid } from "./IsUsernameValid";
+import { IsPasswordValid } from "./IsPasswordValid";
 
 export const validateRegister = (options: UserInputRegister): CustomError[] => {
   const { username, email, password } = options;
@@ -13,7 +14,7 @@ export const validateRegister = (options: UserInputRegister): CustomError[] => {
   if (username.length <= 2 || !IsUsernameValid(username)) {
     return [{ message: ErrorMessage.InvalidUsername, field: "username" }];
   }
-  if (password.length <= 2) {
+  if (!IsPasswordValid(password)) {
     return [{ message: ErrorMessage.InvalidPassword, field: "password" }];
   }
   return [];

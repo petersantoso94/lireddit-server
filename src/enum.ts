@@ -4,4 +4,6 @@ export enum ErrorMessage {
   InvalidEmail = "Invalid email",
   InvalidPassword = "Invalid password",
   DuplicateUsername = "Duplicate username",
+  TokenExpired = "Token is Expired",
+  UserNotFound = "User not found",
 }
