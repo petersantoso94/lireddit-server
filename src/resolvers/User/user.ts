@@ -1,5 +1,4 @@
 import argon2 from "argon2";
-import { IsPasswordValid } from "../../utils/IsPasswordValid";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { v4 } from "uuid";
 import {
@@ -11,6 +10,7 @@ import {
 import { User } from "../../Entities/User";
 import { ErrorMessage } from "../../enum";
 import { IContext } from "../../types";
+import { IsPasswordValid } from "../../utils/IsPasswordValid";
 import { IsUsernameValid } from "../../utils/IsUsernameValid";
 import { getForgotPasswordEmailBody, sendMail } from "../../utils/sendMail";
 import { validateRegister } from "../../utils/validateRegister";
@@ -23,9 +23,8 @@ export class UserResolver {
   async changePassword(
     @Arg("token") token: string,
     @Arg("newPassword") newPassword: string,
-    @Ctx() { em, redis, req }: IContext
+    @Ctx() { redis, req }: IContext
   ): Promise<UserResponse> {
-    em.clear();
     if (!IsPasswordValid(newPassword)) {
       return {
         errors: [
@@ -41,15 +40,18 @@ export class UserResolver {
         errors: [{ field: "token", message: ErrorMessage.TokenExpired }],
       };
     }
-    const user = await em.findOne(User, { id: parseInt(userId) });
+    const userIdNum = parseInt(userId);
+    const user = await User.findOne(userIdNum);
     if (!user) {
       return {
         errors: [{ field: "token", message: ErrorMessage.UserNotFound }],
       };
     }
     //update the password
-    user.password = await argon2.hash(newPassword);
-    await em.persistAndFlush(user);
+    await User.update(
+      { id: userIdNum },
+      { password: await argon2.hash(newPassword) }
+    );
 
     await redis.del(`${FORGOT_PASSWORD_TOKEN_PREFIX_REDIS}${token}`);
     //login user after reset
@@ -63,10 +65,9 @@ export class UserResolver {
   @Mutation(() => Boolean)
   async forgotPassword(
     @Arg("email") email: string,
-    @Ctx() { em, redis }: IContext
+    @Ctx() { redis }: IContext
   ) {
-    em.clear();
-    const user = await em.findOne(User, { email });
+    const user = await User.findOne({ email });
     if (!user) {
       // email not found, dont send anything
       return true;
@@ -90,31 +91,29 @@ export class UserResolver {
   }
 
   @Query(() => User, { nullable: true })
-  async me(@Ctx() { em, req }: IContext) {
+  me(@Ctx() { req }: IContext) {
     if (!req.session!.userId) {
       return null;
     }
-    const me = await em.findOne(User, { id: req.session!.userId });
-    return me;
+    return User.findOne(req.session!.userId);
   }
 
   @Mutation(() => UserResponse)
   async register(
     @Arg("options") options: UserInputRegister,
-    @Ctx() { em, req }: IContext
+    @Ctx() { req }: IContext
   ): Promise<UserResponse> {
-    em.clear();
     const errors = validateRegister(options);
     if (errors.length > 0) return { errors };
     const { username, email, password } = options;
     const hashedPassword = await argon2.hash(password);
-    const newUser = em.create(User, {
-      username,
-      email,
-      password: hashedPassword,
-    });
+    let newUser;
     try {
-      await em.persistAndFlush(newUser);
+      newUser = await User.create({
+        username,
+        email,
+        password: hashedPassword,
+      }).save();
     } catch (error) {
       if (error.code === "23505" || error.detail.includes("already exists")) {
         // duplicate username
@@ -128,8 +127,7 @@ export class UserResolver {
         };
       }
     }
-
-    req.session!.userId = newUser.id;
+    req.session!.userId = newUser?.id;
     return { user: newUser };
   }
 
@@ -137,15 +135,13 @@ export class UserResolver {
   async login(
     @Arg("usernameOrEmail") usernameOrEmail: string,
     @Arg("password") password: string,
-    @Ctx() { em, req }: IContext
+    @Ctx() { req }: IContext
   ): Promise<UserResponse> {
-    em.clear();
     if (usernameOrEmail.length <= 2)
       return {
         errors: [{ message: ErrorMessage.InvalidUsername, field: "username" }],
       };
-    const user = await em.findOne(
-      User,
+    const user = await User.findOne(
       IsUsernameValid(usernameOrEmail)
         ? { username: usernameOrEmail }
         : { email: usernameOrEmail }

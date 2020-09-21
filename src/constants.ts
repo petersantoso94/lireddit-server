@@ -13,3 +13,9 @@ export const FORGOT_PASSWORD_CALLBACK_URL =
 export const REDIS_SECRET =
   process.env.REDIS_SECRET || "jaiwiejawidjiawjdiawjdiaw";
 //#endregion REDIS
+
+//#region TYPEORM
+export const DB_NAME = "pireddit";
+export const DB_USER_NAME = "postgres";
+export const DB_PASSWORD = "postgres";
+//#endregion

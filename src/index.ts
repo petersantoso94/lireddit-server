@@ -1,4 +1,3 @@
-import { MikroORM } from "@mikro-orm/core";
 import { ApolloServer } from "apollo-server-express";
 import connectRedis from "connect-redis";
 import cors from "cors";
@@ -7,6 +6,8 @@ import session from "express-session";
 import Redis from "ioredis";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
+import { createConnection } from "typeorm";
+import typeOrmConf from "./config/typeorm.config";
 import {
   ALLOW_ORIGINS,
   LOGIN_COOKIE_NAME,
@@ -14,7 +15,6 @@ import {
   REDIS_SECRET,
   __prod__,
 } from "./constants";
-import mikroConf from "./mikro-orm.config";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/post";
 import { UserResolver } from "./resolvers/User/user";
@@ -23,8 +23,9 @@ import { IContext } from "./types";
 const main = async () => {
   //sendMail({ html: "<b>test</b>", to: ["test@test.com"] });
   // init db connection
-  const orm = MikroORM.init(mikroConf);
-  await (await orm).getMigrator().up();
+  await createConnection(typeOrmConf);
+  //const orm = MikroORM.init(mikroConf);
+  //await (await orm).getMigrator().up();
 
   const app = express();
 
@@ -57,7 +58,6 @@ const main = async () => {
       validate: false,
     }),
     context: async ({ req, res }): Promise<IContext> => ({
-      em: (await orm).em,
       req,
       res,
       redis,
