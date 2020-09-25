@@ -6,4 +6,5 @@ export enum ErrorMessage {
   DuplicateUsername = "Duplicate username",
   TokenExpired = "Token is Expired",
   UserNotFound = "User not found",
+  NotAuthenticated = "Not Authenticated",
 }

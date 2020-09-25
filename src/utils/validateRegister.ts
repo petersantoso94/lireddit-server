@@ -1,4 +1,4 @@
-import { CustomError } from "src/resolvers/User/CustomError";
+import { CustomError } from "../resolvers/User/CustomError";
 import { ErrorMessage } from "../enum";
 import { UserInputRegister } from "../resolvers/User/UserInputRegister";
 import { IsEmailValid } from "./IsEmailValid";

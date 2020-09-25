@@ -16,17 +16,13 @@ import {
   __prod__,
 } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
-import { PostResolver } from "./resolvers/post";
+import { PostResolver } from "./resolvers/Post/post";
 import { UserResolver } from "./resolvers/User/user";
 import { IContext } from "./types";
 
 const main = async () => {
-  //sendMail({ html: "<b>test</b>", to: ["test@test.com"] });
   // init db connection
   await createConnection(typeOrmConf);
-  //const orm = MikroORM.init(mikroConf);
-  //await (await orm).getMigrator().up();
-
   const app = express();
 
   const RedisStore = connectRedis(session);
