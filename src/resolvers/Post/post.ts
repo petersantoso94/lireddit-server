@@ -1,4 +1,4 @@
-import { IsAuth } from "../../utils/IsAuth";
+import { GetAuthenticateUser } from "../../utils/GetAuthenticateUser";
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../../Entities/Post";
 import { IContext } from "../../types";
@@ -21,7 +21,7 @@ export class PostResolver {
     @Arg("option") option: PostInput,
     @Ctx() { req }: IContext
   ): Promise<Post> {
-    const user = await IsAuth(req);
+    const user = await GetAuthenticateUser(req);
     let newPost = Post.create({ ...option });
     newPost.user = user;
     return newPost.save();
