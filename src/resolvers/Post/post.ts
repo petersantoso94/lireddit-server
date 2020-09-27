@@ -3,6 +3,8 @@ import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { Post } from "../../Entities/Post";
 import { IContext } from "../../types";
 import { PostInput } from "./PostInput";
+import { PostResponse } from "./PostResponse";
+import { IsPostInputValid } from "../../utils/IsPostInputValid";
 
 @Resolver()
 export class PostResolver {
@@ -16,15 +18,18 @@ export class PostResolver {
     return Post.findOne(id);
   }
 
-  @Mutation(() => Post)
+  @Mutation(() => PostResponse)
   async createPost(
     @Arg("option") option: PostInput,
     @Ctx() { req }: IContext
-  ): Promise<Post> {
+  ): Promise<PostResponse> {
     const user = await GetAuthenticateUser(req);
+    const errorList = IsPostInputValid(option);
+    if (errorList) return { errors: [errorList] };
     let newPost = Post.create({ ...option });
     newPost.user = user;
-    return newPost.save();
+    await newPost.save();
+    return { post: newPost };
   }
 
   @Mutation(() => Post)
