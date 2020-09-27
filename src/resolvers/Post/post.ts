@@ -24,8 +24,8 @@ export class PostResolver {
     @Ctx() { req }: IContext
   ): Promise<PostResponse> {
     const user = await GetAuthenticateUser(req);
-    const errorList = IsPostInputValid(option);
-    if (errorList) return { errors: [errorList] };
+    const errors = IsPostInputValid(option);
+    if (errors) return { errors };
     let newPost = Post.create({ ...option });
     newPost.user = user;
     await newPost.save();
