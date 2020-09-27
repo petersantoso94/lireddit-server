@@ -25,7 +25,7 @@ export class PostResolver {
   ): Promise<PostResponse> {
     const user = await GetAuthenticateUser(req);
     const errors = IsPostInputValid(option);
-    if (errors) return { errors };
+    if (errors && errors.length > 0) return { errors };
     let newPost = Post.create({ ...option });
     newPost.user = user;
     await newPost.save();
