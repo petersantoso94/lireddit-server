@@ -9,8 +9,8 @@ import { IsPostInputValid } from "../../utils/IsPostInputValid";
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  posts(): Promise<Post[]> {
-    return Post.find();
+  async posts(): Promise<Post[]> {
+    return Post.find({ relations: ["user"] });
   }
 
   @Query(() => Post, { nullable: true })
