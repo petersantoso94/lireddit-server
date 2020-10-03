@@ -1,16 +1,27 @@
-import { GetAuthenticateUser } from "../../utils/GetAuthenticateUser";
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
+import { LessThanOrEqual } from "typeorm";
 import { Post } from "../../Entities/Post";
 import { IContext } from "../../types";
+import { GetAuthenticateUser } from "../../utils/GetAuthenticateUser";
+import { IsPostInputValid } from "../../utils/IsPostInputValid";
 import { PostInput } from "./PostInput";
 import { PostResponse } from "./PostResponse";
-import { IsPostInputValid } from "../../utils/IsPostInputValid";
 
 @Resolver()
 export class PostResolver {
   @Query(() => [Post])
-  async posts(): Promise<Post[]> {
-    return Post.find({ relations: ["user"] });
+  async posts(
+    @Arg("limit") limit: number,
+    @Arg("cursor", { nullable: true }) cursor: number
+  ): Promise<Post[]> {
+    return Post.find({
+      relations: ["user"],
+      take: Math.min(50, limit),
+      order: { createdAt: "DESC" },
+      where: {
+        createdAt: LessThanOrEqual(new Date(cursor || Date.now())),
+      },
+    });
   }
 
   @Query(() => Post, { nullable: true })
