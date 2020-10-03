@@ -6,7 +6,7 @@ import session from "express-session";
 import Redis from "ioredis";
 import "reflect-metadata";
 import { buildSchema } from "type-graphql";
-import { createConnection } from "typeorm";
+import { createConnection, getConnection } from "typeorm";
 import typeOrmConf from "./config/typeorm.config";
 import {
   ALLOW_ORIGINS,
@@ -20,9 +20,11 @@ import { PostResolver } from "./resolvers/Post/post";
 import { UserResolver } from "./resolvers/User/user";
 import { IContext } from "./types";
 
+//rerun
 const main = async () => {
   // init db connection
   await createConnection(typeOrmConf);
+  await getConnection().runMigrations();
   const app = express();
 
   const RedisStore = connectRedis(session);

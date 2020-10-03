@@ -1,0 +1,7 @@
+{
+  "type": "postgres",
+  "database": "pireddit",
+  "username": "postgres",
+  "password": "postgres",
+  "migrations": ["src/migration/**/*.ts"]
+}
