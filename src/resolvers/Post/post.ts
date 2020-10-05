@@ -1,5 +1,5 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
-import { LessThanOrEqual } from "typeorm";
+import { LessThan, MoreThan } from "typeorm";
 import { Post } from "../../Entities/Post";
 import { IContext } from "../../types";
 import { GetAuthenticateUser } from "../../utils/GetAuthenticateUser";
@@ -17,7 +17,7 @@ export class PostResolver {
     return Post.find({
       relations: ["user"],
       where: {
-        createdAt: LessThanOrEqual(new Date(cursor || Date.now())),
+        id: cursor ? LessThan(cursor) : MoreThan(-1),
       },
       order: { id: "DESC" },
       take: Math.min(50, limit),
