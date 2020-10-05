@@ -16,11 +16,11 @@ export class PostResolver {
   ): Promise<Post[]> {
     return Post.find({
       relations: ["user"],
-      take: Math.min(50, limit),
-      order: { createdAt: "DESC" },
       where: {
         createdAt: LessThanOrEqual(new Date(cursor || Date.now())),
       },
+      order: { id: "DESC" },
+      take: Math.min(50, limit),
     });
   }
 
