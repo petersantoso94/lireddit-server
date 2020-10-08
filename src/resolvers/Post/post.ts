@@ -5,23 +5,31 @@ import { IContext } from "../../types";
 import { GetAuthenticateUser } from "../../utils/GetAuthenticateUser";
 import { IsPostInputValid } from "../../utils/IsPostInputValid";
 import { PostInput } from "./PostInput";
-import { PostResponse } from "./PostResponse";
+import { PaginatedPostResponse, PostResponse } from "./PostResponse";
 
 @Resolver()
 export class PostResolver {
-  @Query(() => [Post])
-  async posts(
+  @Query(() => PaginatedPostResponse)
+  async getPosts(
     @Arg("limit") limit: number,
     @Arg("cursor", { nullable: true }) cursor: number
-  ): Promise<Post[]> {
-    return Post.find({
+  ): Promise<PaginatedPostResponse> {
+    // if return 21, that means still have some post next
+    const realLimit = Math.min(50, limit);
+    const realLimitPlusOne = realLimit + 1;
+    const post = await Post.find({
       relations: ["user"],
       where: {
         id: cursor ? LessThan(cursor) : MoreThan(-1),
       },
       order: { id: "DESC" },
-      take: Math.min(50, limit),
+      take: realLimitPlusOne,
     });
+
+    return {
+      posts: post.slice(0, realLimit),
+      hasMore: realLimitPlusOne === post.length,
+    };
   }
 
   @Query(() => Post, { nullable: true })
