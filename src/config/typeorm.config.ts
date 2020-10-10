@@ -1,4 +1,5 @@
 import path from "path";
+import { Vote } from "../Entities/Vote";
 import { ConnectionOptions } from "typeorm";
 import { DB_NAME, DB_PASSWORD, DB_USER_NAME, __prod__ } from "../constants";
 import { Post } from "../Entities/Post";
@@ -11,6 +12,6 @@ export default {
   password: DB_PASSWORD,
   logging: !__prod__,
   synchronize: !__prod__,
-  entities: [Post, User],
+  entities: [Post, User, Vote],
   migrations: [path.join(__dirname, "../migration/*")],
 } as ConnectionOptions;

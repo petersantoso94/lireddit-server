@@ -3,12 +3,14 @@ import {
   BaseEntity,
   Column,
   CreateDateColumn,
+  Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  Entity,
 } from "typeorm";
 import { User } from "./User";
+import { Vote } from "./Vote";
 
 @ObjectType()
 @Entity()
@@ -20,6 +22,10 @@ export class Post extends BaseEntity {
   @Field(() => User)
   @ManyToOne(() => User, (user) => user.post)
   user: User;
+
+  @Field(() => Vote)
+  @OneToMany(() => Vote, (vote) => vote.post)
+  vote: Vote[];
 
   @Field()
   @Column()
