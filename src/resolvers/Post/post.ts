@@ -1,6 +1,7 @@
 import { Arg, Ctx, Int, Mutation, Query, Resolver } from "type-graphql";
 import { LessThan, MoreThan } from "typeorm";
 import { Post } from "../../Entities/Post";
+import { Vote } from "../../Entities/Vote";
 import { IContext } from "../../types";
 import { GetAuthenticateUser } from "../../utils/GetAuthenticateUser";
 import { IsPostInputValid } from "../../utils/IsPostInputValid";
@@ -49,6 +50,47 @@ export class PostResolver {
     newPost.user = user;
     await newPost.save();
     return { post: newPost };
+  }
+
+  @Mutation(() => Boolean)
+  async vote(
+    @Arg("postId") postId: number,
+    @Arg("isUpvote") isUpvote: boolean,
+    @Ctx() { req }: IContext
+  ): Promise<Boolean> {
+    const user = await GetAuthenticateUser(req);
+    const post = await Post.findOne(postId);
+    if (!post) {
+      // post not found
+      return false;
+    }
+
+    const vote = await Vote.find({
+      where: {
+        post: post,
+        up: isUpvote,
+        user: user,
+      },
+    });
+    console.log(vote);
+    if (vote.length > 0) {
+      // duplicate upvote
+      return false;
+    }
+
+    // create new vote
+    const newVote = new Vote();
+    newVote.user = user;
+    newVote.post = post;
+    newVote.up = isUpvote;
+    await newVote.save();
+
+    // update post's points
+    post.point += isUpvote ? 1 : -1;
+    post.save();
+
+    // return true if all processes are complete
+    return true;
   }
 
   @Mutation(() => Post)
