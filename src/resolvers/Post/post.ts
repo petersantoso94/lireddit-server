@@ -65,25 +65,30 @@ export class PostResolver {
       return false;
     }
 
-    const vote = await Vote.find({
+    const vote = await Vote.findOne({
       where: {
         post: post,
-        up: isUpvote,
         user: user,
       },
     });
-    console.log(vote);
-    if (vote.length > 0) {
-      // duplicate upvote
-      return false;
-    }
 
-    // create new vote
-    const newVote = new Vote();
-    newVote.user = user;
-    newVote.post = post;
-    newVote.up = isUpvote;
-    await newVote.save();
+    if (vote && vote.up === isUpvote) {
+      // already gave same upvote /downvote
+      return false;
+    } else if (vote && vote.up !== isUpvote) {
+      // already gave some upvote /downvote and want to change
+      // update the voting
+      vote.up = isUpvote;
+      await vote.save();
+    } else {
+      // no vote before
+      // create new vote
+      const newVote = new Vote();
+      newVote.user = user;
+      newVote.post = post;
+      newVote.up = isUpvote;
+      await newVote.save();
+    }
 
     // update post's points
     post.point += isUpvote ? 1 : -1;
