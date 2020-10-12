@@ -99,7 +99,7 @@ export class PostResolver {
 
     // update post's points
     post.point += realPoint;
-    post.save();
+    await post.save();
 
     // return true if all processes are complete
     return true;
