@@ -1,4 +1,5 @@
 import argon2 from "argon2";
+import { Vote } from "../../Entities/Vote";
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { v4 } from "uuid";
 import {
@@ -88,6 +89,22 @@ export class UserResolver {
       ),
     });
     return true;
+  }
+
+  @Query(() => [Vote], { nullable: true })
+  async getVotes(@Ctx() { req }: IContext) {
+    const userId = req.session!.userId;
+    if (!userId) {
+      return null;
+    }
+    const user = await User.findOne(userId);
+    const votes = await Vote.find({
+      relations: ["post"],
+      where: {
+        user: user,
+      },
+    });
+    return votes;
   }
 
   @Query(() => User, { nullable: true })

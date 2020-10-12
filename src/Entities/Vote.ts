@@ -12,6 +12,7 @@ import { User } from "./User";
 @ObjectType()
 @Entity()
 export class Vote extends BaseEntity {
+  @Field()
   @PrimaryGeneratedColumn()
   voteId!: number;
 
