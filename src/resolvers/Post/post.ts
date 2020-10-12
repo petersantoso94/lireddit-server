@@ -72,14 +72,21 @@ export class PostResolver {
       },
     });
 
+    let realPoint = isUpvote ? 1 : -1;
+
     if (vote && vote.up === isUpvote) {
       // already gave same upvote /downvote
-      return false;
+      // user want to remove their vote
+      realPoint = isUpvote ? -1 : 1;
+      await vote.remove();
     } else if (vote && vote.up !== isUpvote) {
       // already gave some upvote /downvote and want to change
       // update the voting
       vote.up = isUpvote;
       await vote.save();
+
+      // update point times 2, if it is +1 then downvote give -1*2 then the last point will be -1
+      realPoint *= 2;
     } else {
       // no vote before
       // create new vote
@@ -91,7 +98,7 @@ export class PostResolver {
     }
 
     // update post's points
-    post.point += isUpvote ? 1 : -1;
+    post.point += realPoint;
     post.save();
 
     // return true if all processes are complete
