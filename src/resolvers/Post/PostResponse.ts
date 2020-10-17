@@ -18,3 +18,12 @@ export class PaginatedPostResponse {
   @Field(() => [Post])
   posts: Post[];
 }
+
+@ObjectType()
+export class VotingResponse {
+  @Field(() => Boolean)
+  isSuccess: Boolean;
+
+  @Field(() => Number, { nullable: true })
+  newPoint?: number;
+}

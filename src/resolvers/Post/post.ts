@@ -6,7 +6,11 @@ import { IContext } from "../../types";
 import { GetAuthenticateUser } from "../../utils/GetAuthenticateUser";
 import { IsPostInputValid } from "../../utils/IsPostInputValid";
 import { PostInput } from "./PostInput";
-import { PaginatedPostResponse, PostResponse } from "./PostResponse";
+import {
+  PaginatedPostResponse,
+  PostResponse,
+  VotingResponse,
+} from "./PostResponse";
 
 @Resolver()
 export class PostResolver {
@@ -52,17 +56,19 @@ export class PostResolver {
     return { post: newPost };
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => VotingResponse)
   async vote(
     @Arg("postId") postId: number,
     @Arg("isUpvote") isUpvote: boolean,
     @Ctx() { req }: IContext
-  ): Promise<Boolean> {
+  ): Promise<VotingResponse> {
     const user = await GetAuthenticateUser(req);
     const post = await Post.findOne(postId);
     if (!post) {
       // post not found
-      return false;
+      return {
+        isSuccess: false,
+      };
     }
 
     const vote = await Vote.findOne({
@@ -102,7 +108,10 @@ export class PostResolver {
     await post.save();
 
     // return true if all processes are complete
-    return true;
+    return {
+      isSuccess: true,
+      newPoint: post.point,
+    };
   }
 
   @Mutation(() => Post)
