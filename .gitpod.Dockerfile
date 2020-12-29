@@ -14,6 +14,7 @@ RUN /etc/init.d/postgresql start &&\
     createdb -O postgres pireddit
     
 # Setup postgres server for user gitpod
+USER root
 ENV PATH="$PATH:/usr/lib/postgresql/12/bin"
 ENV PGDATA="/workspace/.pgsql/data"
 RUN mkdir -p ~/.pg_ctl/bin ~/.pg_ctl/sockets \
