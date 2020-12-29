@@ -11,4 +11,5 @@ ports:
 # List the start up tasks. You can start them in parallel in multiple terminals. See https://www.gitpod.io/docs/config-start-tasks/
 tasks:
   - command: |
-        redis-server /workspace/src/config/redis.conf
+        redis-server /workspace/redis.conf
+        pg_start
