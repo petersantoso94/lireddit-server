@@ -3,8 +3,7 @@ image:
 
 # List the ports you want to expose and what to do when they are served. See https://www.gitpod.io/docs/config-ports/
 ports:
-  - port: 3030
-  - port: 8080
+  - port: 4000
   - port: 5432
   - port: 6379
 

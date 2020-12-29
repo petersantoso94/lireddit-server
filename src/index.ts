@@ -8,13 +8,7 @@ import "reflect-metadata";
 import { buildSchema } from "type-graphql";
 import { createConnection, getConnection } from "typeorm";
 import typeOrmConf from "./config/typeorm.config";
-import {
-  ALLOW_ORIGINS,
-  LOGIN_COOKIE_NAME,
-  PORT,
-  REDIS_SECRET,
-  __prod__,
-} from "./constants";
+import { ALLOW_ORIGINS, LOGIN_COOKIE_NAME, PORT, REDIS_SECRET, __prod__ } from "./constants";
 import { HelloResolver } from "./resolvers/hello";
 import { PostResolver } from "./resolvers/Post/post";
 import { UserResolver } from "./resolvers/User/user";
@@ -22,7 +16,7 @@ import { IContext } from "./types";
 
 //rerun
 const main = async () => {
-  // init db connection
+  // init db connection, id: peter, pass: peter
   await createConnection(typeOrmConf);
   await getConnection().runMigrations();
   const app = express();
