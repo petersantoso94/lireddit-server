@@ -16,7 +16,7 @@ RUN mkdir -p ~/.pg_ctl/bin ~/.pg_ctl/sockets \
  && chmod +x ~/.pg_ctl/bin/*
  
 # Create db
-RUN /etc/init.d/postgresql start
+RUN sudo /etc/init.d/postgresql start
 RUN psql postgres -c "CREATE USER postgres SUPERUSER;" -c "CREATE DATABASE pireddit WITH OWNER postgres;"
 
 # Add required env
