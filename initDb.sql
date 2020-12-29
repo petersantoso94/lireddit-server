@@ -1,2 +1,0 @@
-CREATE USER postgres SUPERUSER;
-CREATE DATABASE pireddit WITH OWNER postgres;
