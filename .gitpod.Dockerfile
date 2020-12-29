@@ -18,8 +18,3 @@ ENV PATH="$PATH:$HOME/.pg_ctl/bin"
 ENV DATABASE_URL="postgresql://gitpod@localhost"
 ENV PGHOSTADDR="127.0.0.1"
 ENV PGDATABASE="postgres"
-
-# Add pireddit db
-USER postgres
-RUN /etc/init.d/postgresql start &&\
-    createdb -O postgres pireddit
