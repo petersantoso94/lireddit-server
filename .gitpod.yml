@@ -13,6 +13,6 @@ tasks:
   - command: |
         redis-server /workspace/lireddit-server/redis.conf --daemonize yes
         pg_start
-        psql postgres
+        psql postgres -c "CREATE USER postgres SUPERUSER;" -c "CREATE DATABASE pireddit WITH OWNER postgres;"
         npm install
         npm run dev
