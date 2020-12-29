@@ -3,7 +3,7 @@ image:
 
 # List the ports you want to expose and what to do when they are served. See https://www.gitpod.io/docs/config-ports/
 ports:
-  - port: 3000
+  - port: 3030
   - port: 8080
   - port: 5432
   - port: 6379
@@ -14,5 +14,5 @@ tasks:
         redis-server /workspace/lireddit-server/redis.conf --daemonize yes
         pg_start
         psql postgres -c "CREATE USER postgres SUPERUSER;" -c "CREATE DATABASE pireddit WITH OWNER postgres;"
-        npm install
-        npm run dev
+        yarn
+        yarn watch
