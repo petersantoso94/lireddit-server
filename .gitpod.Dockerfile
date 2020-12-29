@@ -1,12 +1,11 @@
 FROM gitpod/workspace-full
 
 # Install postgres & Redis
-USER root
-RUN apt-get update && apt-get install -y \
+RUN sudo apt-get update && sudo apt-get install -y \
         postgresql \
         postgresql-contrib \
         redis-server \
-    && apt-get clean && rm -rf /var/cache/apt/* && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
+    && sudo apt-get clean && sudo rm -rf /var/cache/apt/* && sudo rm -rf /var/lib/apt/lists/* && sudo rm -rf /tmp/*
 
 # Add pireddit db
 USER postgres
@@ -14,7 +13,6 @@ RUN /etc/init.d/postgresql start &&\
     createdb -O postgres pireddit
     
 # Setup postgres server for user gitpod
-USER root
 ENV PATH="$PATH:/usr/lib/postgresql/12/bin"
 ENV PGDATA="/workspace/.pgsql/data"
 RUN mkdir -p ~/.pg_ctl/bin ~/.pg_ctl/sockets \
