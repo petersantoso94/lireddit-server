@@ -12,7 +12,7 @@ ENV PATH="$PATH:/usr/lib/postgresql/12/bin"
 ENV PGDATA="/workspace/.pgsql/data"
 RUN mkdir -p ~/.pg_ctl/bin ~/.pg_ctl/sockets \
  && printf '#!/bin/bash\n[ ! -d $PGDATA ] && mkdir -p $PGDATA && initdb -D $PGDATA\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" start\n' > ~/.pg_ctl/bin/pg_start \
- && printf '#!/bin/bash\n psql postgres -c "CREATE USER postgres SUPERUSER;" -c "CREATE DATABASE pireddit WITH OWNER postgres;"\n' > ~/.pg_ctl/bin/pg_init \
+ && printf '#!/bin/bash\n psql postgres -c "CREATE USER postgres SUPERUSER;" -c "CREATE DATABASE pireddit WITH OWNER postgres;" -c "exit"\n' > ~/.pg_ctl/bin/pg_init \
  && printf '#!/bin/bash\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" stop\n' > ~/.pg_ctl/bin/pg_stop \
  && chmod +x ~/.pg_ctl/bin/*
 
