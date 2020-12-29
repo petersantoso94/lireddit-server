@@ -8,6 +8,11 @@ RUN apt-get update && apt-get install -y \
         redis-server \
     && apt-get clean && rm -rf /var/cache/apt/* && rm -rf /var/lib/apt/lists/* && rm -rf /tmp/*
 
+# Add pireddit db
+USER postgres
+RUN /etc/init.d/postgresql start &&\
+    createdb -O postgres pireddit
+    
 # Setup postgres server for user gitpod
 ENV PATH="$PATH:/usr/lib/postgresql/12/bin"
 ENV PGDATA="/workspace/.pgsql/data"
@@ -19,8 +24,3 @@ ENV PATH="$PATH:$HOME/.pg_ctl/bin"
 ENV DATABASE_URL="postgresql://gitpod@localhost"
 ENV PGHOSTADDR="127.0.0.1"
 ENV PGDATABASE="postgres"
-
-# Add pireddit db
-USER postgres
-RUN /etc/init.d/postgresql start &&\
-    createdb -O postgres pireddit
