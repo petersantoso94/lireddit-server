@@ -11,8 +11,4 @@ RUN apt-get update && apt-get install -y \
 # Setup postgres server for user gitpod
 USER postgres
 RUN /etc/init.d/postgresql start &&\
-    createdb -O postgres lireddit
-
-# Setup redis server for user gitpod
-COPY ./src/config/redis.conf /redis.conf
-RUN redis-server /redis.conf
+    createdb -O postgres pireddit
