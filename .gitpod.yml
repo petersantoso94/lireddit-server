@@ -11,7 +11,7 @@ ports:
 # List the start up tasks. You can start them in parallel in multiple terminals. See https://www.gitpod.io/docs/config-start-tasks/
 tasks:
   - command: |
-        redis-server /workspace/lireddit-server/redis.conf
+        redis-server /workspace/lireddit-server/redis.conf --daemonize yes
         pg_start
         npm install
         npm run dev
