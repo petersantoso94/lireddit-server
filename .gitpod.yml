@@ -13,5 +13,7 @@ tasks:
   - command: |
         redis-server /workspace/lireddit-server/redis.conf --daemonize yes
         pg_start
+        pg_init
+        psql postgres
         npm install
         npm run dev
