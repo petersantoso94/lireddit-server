@@ -15,10 +15,6 @@ RUN mkdir -p ~/.pg_ctl/bin ~/.pg_ctl/sockets \
  && printf '#!/bin/bash\npg_ctl -D $PGDATA -l ~/.pg_ctl/log -o "-k ~/.pg_ctl/sockets" stop\n' > ~/.pg_ctl/bin/pg_stop \
  && chmod +x ~/.pg_ctl/bin/*
  
-# Create db
-RUN ~/.pg_ctl/bin/pg_start
-RUN psql postgres -c "CREATE USER postgres SUPERUSER;" -c "CREATE DATABASE pireddit WITH OWNER postgres;"
-
 # Add required env
 ENV PATH="$PATH:$HOME/.pg_ctl/bin"
 ENV DATABASE_URL="postgresql://postgres@localhost"
