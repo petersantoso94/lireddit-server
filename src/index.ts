@@ -23,6 +23,7 @@ const main = async () => {
 
   const RedisStore = connectRedis(session);
   const redis = new Redis();
+  console.log(ALLOW_ORIGINS)
   app.use(
     cors({
       origin: ALLOW_ORIGINS,
